@@ -1,0 +1,10 @@
+[package]
+name = "coin_cbc_sys"
+version = "0.1.0"
+authors = ["Gregory Arefyev <gregory@recom.live>"]
+
+[dependencies]
+
+[build-dependencies]
+cc = { version = "1.0.71", features = ["parallel"] }
+bindgen = "0.59.1"
