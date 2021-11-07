@@ -60,6 +60,82 @@ fn big_row() {
 }
 
 #[test]
+fn multiple_threads() {
+    use std::thread::{spawn, JoinHandle};
+    let threads: Vec<JoinHandle<()>> = (0..50)
+        .map(|_| {
+            spawn(|| {
+                for _ in 1..3 {
+                    // Solve an empty problem
+                    let mut m = Model::new();
+                    m.load_problem(1, 0, &[0, 0], &[], &[], None, None, None, None, None);
+                    m.solve();
+                    if Model::version().starts_with("2.9.") {
+                        assert_eq!(Status::Finished, m.status());
+                        assert_eq!(SecondaryStatus::HasSolution, m.secondary_status());
+                    } else {
+                        assert_eq!(Status::Unlaunched, m.status());
+                        assert_eq!(SecondaryStatus::Unlaunched, m.secondary_status());
+                    }
+                    assert!((m.col_solution()[0]).abs() < 1e-6);
+                    // Solve a non-empty problem
+                    let mut m = Model::new();
+                    m.load_problem(
+                        5,
+                        1,
+                        &vec![0, 1, 2, 3, 4, 5],
+                        &vec![0, 0, 0, 0, 0],
+                        &vec![2., 8., 4., 2., 5.],
+                        Some(&vec![0., 0., 0., 0., 0.]),
+                        Some(&vec![1., 1., 1., 1., 1.]),
+                        Some(&vec![5., 3., 2., 7., 4.]),
+                        Some(&vec![-std::f64::INFINITY]),
+                        Some(&vec![10.]),
+                    );
+                    m.set_obj_sense(Sense::Maximize);
+                    for i in 0..5 {
+                        m.set_integer(i);
+                    }
+                    m.set_initial_solution(&vec![1., 1., 0., 0., 0.]);
+                    m.solve();
+                    assert_eq!(Status::Finished, m.status());
+                    assert_eq!(SecondaryStatus::HasSolution, m.secondary_status());
+                    assert!((m.col_solution()[0] - 1.).abs() < 1e-6);
+                }
+            })
+        })
+        .collect();
+    for t in threads {
+        t.join().expect("thread failed");
+    }
+}
+
+#[test]
+fn sos_one_constraint() {
+    let mut m = Model::new();
+    // Minimize 5x + 3y with -1 <= x <= 1 and -1 <= y <= 1
+    m.load_problem(
+        2,
+        0,
+        &vec![0, 0, 0],
+        &vec![],
+        &vec![],
+        Some(&vec![-1., -1.]),
+        Some(&vec![1., 1.]),
+        Some(&vec![5., 3.]),
+        None,
+        None,
+    );
+    // Add a constraint that either x or y must be 0
+    m.add_sos(&[0, 2], &[0, 1], &[5., 3.], SOSConstraintType::Type1);
+    m.set_integer(0);
+    m.set_integer(1);
+    m.solve();
+    // The solution is x = -1 and y = 0
+    assert_eq!(&[-1., 0.], m.col_solution());
+}
+
+#[test]
 fn sos_multiple_constraints() {
     let mut m = Model::new();
     // Minimize x + 5y + z with -1 <= x <= 1 and -1 <= y <= 1 and -1 <= z <= 1

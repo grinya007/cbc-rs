@@ -345,6 +345,7 @@ fn main() {
         .flag("-DNDEBUG")
         .flag("-DCOIN_NO_CLP_MESSAGE")
         .flag("-DCBC_BUILD")
+        .flag("-DCBC_THREAD_SAFE")
         .flag("-DHAVE_CFLOAT")
         .flag("-DHAVE_CMATH")
         .flag("-DHAVE_DLFCN_H")

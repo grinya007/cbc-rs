@@ -1,5 +1,5 @@
 extern crate coin_cbc_sys;
-// 
+//
 //  The code is taken from https://github.com/KardinalAI/coin_cbc/blob/master/src/raw.rs
 //
 // A raw and safe binding to the Coin CBC C API.
@@ -434,10 +434,4 @@ impl Clone for Model {
         }
     }
 }
-
-//#[cfg(test)]
-//mod test {
-    //use super::*;
-
-//}
 
