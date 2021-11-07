@@ -13,7 +13,7 @@ takes about 2 minutes on a modern Intel CPU, outputs about 10 Mb of a Rust libra
 ```
 cargo test --release
 ```
-tested on Ubuntu 20.04 and MacOS 11.6
+tested on Ubuntu 20.04 (requires clang) and MacOS 11.6 (requires Xcode)
 
 ### Pros
 * No worry installing CBC in the system
