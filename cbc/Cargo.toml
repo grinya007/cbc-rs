@@ -1,0 +1,7 @@
+[package]
+name = "cbc"
+version = "0.1.0"
+authors = ["Gregory Arefyev <gregory@recom.live>"]
+
+[dependencies]
+coin_cbc_sys = { path = "../cbc-sys" }

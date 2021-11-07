@@ -1,0 +1,77 @@
+diff --git a/Cbc/src/Cbc_C_Interface.cpp b/Cbc/src/Cbc_C_Interface.cpp
+index cf8fdc04..025082ca 100644
+--- a/Cbc/src/Cbc_C_Interface.cpp
++++ b/Cbc/src/Cbc_C_Interface.cpp
+@@ -1109,6 +1109,12 @@ Cbc_getColSolution(Cbc_Model *model)
+   return model->model_->getColSolution();
+ }
+ 
++COINLIBAPI const double *COINLINKAGE
++Cbc_getRowPrice(Cbc_Model *model)
++{
++  return model->model_->getRowPrice();
++}
++
+ CbcGetProperty(int, isContinuousUnbounded)
+   CbcGetProperty(int, isNodeLimitReached)
+     CbcGetProperty(int, isSecondsLimitReached)
+diff --git a/Cbc/src/Cbc_C_Interface.h b/Cbc/src/Cbc_C_Interface.h
+index abef8562..8808718c 100644
+--- a/Cbc/src/Cbc_C_Interface.h
++++ b/Cbc/src/Cbc_C_Interface.h
+@@ -636,6 +636,14 @@ Cbc_solve(Cbc_Model *model);
+ COINLIBAPI const double *COINLINKAGE
+ Cbc_getColSolution(Cbc_Model *model);
+ 
++/** @brief Dual constraint solution
++     *
++     * @param model problem object
++     * @return vector with dual values for constraints
++     **/
++COINLIBAPI const double *COINLINKAGE
++Cbc_getRowPrice(Cbc_Model *model);
++
+ 
+ /** @brief Best known bound on the optimal objective value 
+      *
+diff --git a/Cbc/src/config_default.h b/Cbc/src/config_default.h
+index 918816d3..c7fad372 100644
+--- a/Cbc/src/config_default.h
++++ b/Cbc/src/config_default.h
+@@ -1,6 +1,6 @@
+ 
+ /* include the COIN-OR-wide system specific configure header */
+-#include "configall_system.h"
++//#include "configall_system.h"
+ 
+ /* include the public project specific macros */
+ #include "config_cbc_default.h"
+@@ -29,7 +29,7 @@
+ #define COIN_HAS_OSI 1
+ 
+ /* Define to 1 if the Vol package is used */
+-#define COIN_HAS_VOL 1
++#define COIN_HAS_VOL 0
+ 
+ /* Define to 1 if the Cplex package is used */
+ /* #undef COIN_HAS_CPX */
+@@ -63,16 +63,16 @@
+   Define to the name of the default solver interface class, e.g.,
+   OsiClpSolverInterface.
+ */
+-/* #define OSICBC_DFLT_SOLVER OsiClpSolverInterface */
++#define OSICBC_DFLT_SOLVER OsiClpSolverInterface
+ 
+ /* Define this symbol if clp is the default solver. */
+-/* #define OSICBC_DFLT_SOLVER_CLP 1 */
++#define OSICBC_DFLT_SOLVER_CLP 1
+ 
+ /*
+   Define to the name of the .hpp file for the default solver interface class,
+   e.g., "OsiClpSolverInterface.hpp" (include quotes)
+ */
+-/* #define OSICBC_DFLT_SOLVER_HPP "OsiClpSolverInterface.hpp" */
++#define OSICBC_DFLT_SOLVER_HPP "OsiClpSolverInterface.hpp"
+ 
+ /* vi: softtabstop=2 shiftwidth=2 expandtab tabstop=2
+ */
