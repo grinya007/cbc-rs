@@ -1,0 +1,38 @@
+diff --git a/Clp/src/OsiClp/OsiClpSolverInterface.cpp b/Clp/src/OsiClp/OsiClpSolverInterface.cpp
+index 6cbaca99..146cc115 100644
+--- a/Clp/src/OsiClp/OsiClpSolverInterface.cpp
++++ b/Clp/src/OsiClp/OsiClpSolverInterface.cpp
+@@ -3838,6 +3838,19 @@ void OsiClpSolverInterface::setInteger(int index)
+   modelPtr_->setInteger(index);
+ }
+ //-----------------------------------------------------------------------------
++void OsiClpSolverInterface::copyInIntegerInformation(const char *information)
++{
++  delete[] integerInformation_;
++  if (information) {
++    int n = modelPtr_->numberColumns();
++    integerInformation_ = new char[n];
++    CoinMemcpyN(information, n, integerInformation_);
++  } else {
++    integerInformation_ = NULL;
++  }
++  modelPtr_->copyInIntegerInformation(information);
++}
++//-----------------------------------------------------------------------------
+ void OsiClpSolverInterface::setContinuous(const int *indices, int len)
+ {
+   if (integerInformation_) {
+diff --git a/Clp/src/OsiClp/OsiClpSolverInterface.hpp b/Clp/src/OsiClp/OsiClpSolverInterface.hpp
+index 9b945741..3e2bb10e 100644
+--- a/Clp/src/OsiClp/OsiClpSolverInterface.hpp
++++ b/Clp/src/OsiClp/OsiClpSolverInterface.hpp
+@@ -693,6 +693,9 @@ public:
+       integer variables */
+   virtual void setInteger(const int *indices, int len);
+   /// Number of SOS sets
++
++  virtual void copyInIntegerInformation(const char *information);
++
+   inline int numberSOS() const
+   {
+     return numberSOS_;
