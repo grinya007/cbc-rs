@@ -15,6 +15,7 @@ extern crate coin_cbc_sys;
 use coin_cbc_sys::*;
 use std::convert::TryInto;
 use std::ffi::CStr;
+use std::mem::transmute;
 use std::os::raw::c_int;
 
 #[cfg(feature = "singlethread-cbc")]
@@ -265,6 +266,15 @@ impl Model {
     pub fn set_integer(&mut self, i: usize) {
         assert!(i < self.num_cols());
         unsafe { Cbc_setInteger(self.m, i.try_into().unwrap()) }
+    }
+    pub fn copy_in_integer_information(&mut self, information: &[bool]) {
+        assert!(information.len() == self.num_cols());
+        unsafe {
+            Cbc_copyInIntegerInformation(
+                self.m,
+                std::mem::transmute::<*const bool, *const i8>(information.as_ptr()),
+            )
+        }
     }
     /// Adds multiple SOS constraints
     /// num_rows: the number of SOS constraints to add

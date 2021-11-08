@@ -21,8 +21,8 @@ fn knapsack() {
     assert_eq!(1, m.num_rows());
     m.set_obj_sense(Sense::Maximize);
     assert_eq!(Sense::Maximize, m.obj_sense());
+    m.copy_in_integer_information(&[true, true, true, true, true]);
     for i in 0..5 {
-        m.set_integer(i);
         assert!(m.is_integer(i));
     }
     m.set_initial_solution(&vec![1., 1., 0., 0., 0.]);
@@ -93,9 +93,7 @@ fn multiple_threads() {
                         Some(&vec![10.]),
                     );
                     m.set_obj_sense(Sense::Maximize);
-                    for i in 0..5 {
-                        m.set_integer(i);
-                    }
+                    m.copy_in_integer_information(&[true, true, true, true, true]);
                     m.set_initial_solution(&vec![1., 1., 0., 0., 0.]);
                     m.solve();
                     assert_eq!(Status::Finished, m.status());
@@ -128,8 +126,7 @@ fn sos_one_constraint() {
     );
     // Add a constraint that either x or y must be 0
     m.add_sos(&[0, 2], &[0, 1], &[5., 3.], SOSConstraintType::Type1);
-    m.set_integer(0);
-    m.set_integer(1);
+    m.copy_in_integer_information(&[true, true]);
     m.solve();
     // The solution is x = -1 and y = 0
     assert_eq!(&[-1., 0.], m.col_solution());
@@ -164,9 +161,7 @@ fn sos_multiple_constraints() {
         &[1., 5., 5., 1.],
         SOSConstraintType::Type1,
     );
-    m.set_integer(0);
-    m.set_integer(1);
-    m.set_integer(2);
+    m.copy_in_integer_information(&[true, true, true]);
 
     m.solve();
     // The solution is x = -1 and y = 0

@@ -1,5 +1,5 @@
 diff --git a/Cbc/src/Cbc_C_Interface.cpp b/Cbc/src/Cbc_C_Interface.cpp
-index cf8fdc04..025082ca 100644
+index cf8fdc04..6defb49f 100644
 --- a/Cbc/src/Cbc_C_Interface.cpp
 +++ b/Cbc/src/Cbc_C_Interface.cpp
 @@ -1109,6 +1109,12 @@ Cbc_getColSolution(Cbc_Model *model)
@@ -15,11 +15,42 @@ index cf8fdc04..025082ca 100644
  CbcGetProperty(int, isContinuousUnbounded)
    CbcGetProperty(int, isNodeLimitReached)
      CbcGetProperty(int, isSecondsLimitReached)
+@@ -1327,6 +1333,12 @@ Cbc_setInteger(Cbc_Model *model, int iColumn)
+   if (VERBOSE > 0)
+     printf("%s return\n", prefix);
+ }
++/** Copy in integer information */
++COINLIBAPI void COINLINKAGE
++Cbc_copyInIntegerInformation(Cbc_Model *model, const char *information)
++{
++  model->solver_->copyInIntegerInformation(information);
++}
+ 
+ /** Adds a new column */
+ COINLIBAPI void COINLINKAGE
 diff --git a/Cbc/src/Cbc_C_Interface.h b/Cbc/src/Cbc_C_Interface.h
-index abef8562..8808718c 100644
+index abef8562..dc5c4322 100644
 --- a/Cbc/src/Cbc_C_Interface.h
 +++ b/Cbc/src/Cbc_C_Interface.h
-@@ -636,6 +636,14 @@ Cbc_solve(Cbc_Model *model);
+@@ -194,6 +194,17 @@ Cbc_setContinuous(Cbc_Model *model, int iColumn);
+ COINLIBAPI void COINLINKAGE
+ Cbc_setInteger(Cbc_Model *model, int iColumn);
+ 
++/** @brief Copy in integer information
++     *
++     * At present, simply coded as zero (continuous) and non-zero (integer)
++     * May be extended at a later date.
++     *
++     * @param model problem object
++     * @param an array[getNumCols()] specifying if a variable is integer
++     **/
++COINLIBAPI void COINLINKAGE
++Cbc_copyInIntegerInformation(Cbc_Model *model, const char *information);
++
+ /** @brief Cbc_Model destructor */
+ COINLIBAPI void COINLINKAGE
+ Cbc_deleteModel(Cbc_Model *model);
+@@ -636,6 +647,14 @@ Cbc_solve(Cbc_Model *model);
  COINLIBAPI const double *COINLINKAGE
  Cbc_getColSolution(Cbc_Model *model);
  
